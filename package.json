@@ -1,4 +1,13 @@
-{
+{ 
+  "name": "nodejs-demo",
+  "version": "1.0.0",
+  "main": "server.js",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "formidable": "^3.5.1",
     "tailwind": "^4.0.0"
