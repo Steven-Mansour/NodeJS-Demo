@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="src/output.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
     <title>File Upload</title>
 </head>
-<body>
-    <h2>File Upload</h2>
+
+<body class="p-8 text-white bg-slate-500 font-poppins">
+    <h2 class="font-poppins text-3xl mb-12">File Upload</h2>
     <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <input type="submit" value="Upload">
+        <input type="file" name="file" class="rounded-full">
+        <input type="submit" value="Upload" class="bg-slate-700 p-2 rounded-full">
     </form>
 </body>
+
 </html>

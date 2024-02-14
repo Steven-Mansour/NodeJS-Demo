@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const formidable = require('formidable');
+const formidable = require('formidable'); //npm install formidable
 
 const server = http.createServer((req, res) => {
 
@@ -24,36 +24,36 @@ const server = http.createServer((req, res) => {
       if (Array.isArray(files.file) && files.file.length > 0) {
         const uploadedFile = files.file[0];
 
-      // temporary location of the uploaded file
-    //   const oldPath = files.file.path;
-      const oldPath = uploadedFile.filepath;
+        // temporary location of the uploaded file
+        //   const oldPath = files.file.path;
+        const oldPath = uploadedFile.filepath;
 
-      // where to move the file
-      const newPath = './uploads/' + files.file.name;
+        // where to move the file
+        const newPath = './uploads/' + files.file.name;
 
-      // moving the file to the specified location
-      fs.rename(oldPath, newPath, (err) => {
-        if (err) {
-          res.writeHead(500, { 'Content-Type': 'text/plain' });
-          res.end('Internal Server Error');
-          return;
-        }
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end('File uploaded and moved successfully');
-      });
-    }
-    else {
+        // moving the file to the specified location
+        fs.rename(oldPath, newPath, (err) => {
+          if (err) {
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Internal Server Error');
+            return;
+          }
+          res.writeHead(200, { 'Content-Type': 'text/plain' });
+          res.end('File uploaded and moved successfully');
+        });
+      }
+      else {
         console.error('No files uploaded or unexpected file format');
         res.writeHead(400, { 'Content-Type': 'text/plain' });
         res.end('Bad Request');
-    }
+      }
     });
     return;
   }
 
   // routing
   let path = './';
-  switch(req.url) {
+  switch (req.url) {
     case '/':
       path += 'index.html';
       res.statusCode = 200;
@@ -62,16 +62,16 @@ const server = http.createServer((req, res) => {
       path += 'src/style.css';
       res.setHeader('Content-Type', 'text/css');
       res.statusCode = 200;
-        break;
+      break;
     case '/src/output.css':
       path += 'src/output.css';
       res.setHeader('Content-Type', 'text/css');
       res.statusCode = 200;
-        break;
+      break;
     case '/upload':
       path += 'upload.html';
       res.statusCode = 200;
-        break;
+      break;
     default:
       path += '404.html';
       res.statusCode = 404;
