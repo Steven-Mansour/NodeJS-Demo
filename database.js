@@ -28,7 +28,21 @@ class db {
             if (err) throw err;
             console.log('PDF file inserted into the database');
         });
-        this.end();
+        
+    }
+
+    getAllFiles() {
+        return new Promise((resolve, reject) => {
+            this.con.query('SELECT name FROM file', (err, results) => {
+                if (err) {
+                    console.error('Error retrieving files from the database:', err);
+                    reject(err);
+                    return;
+                }
+                const filesList = results.map(row => row.name);
+                resolve(filesList);
+            });
+        });
     }
 
     // Close the database connection

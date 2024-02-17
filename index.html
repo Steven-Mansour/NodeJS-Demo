@@ -38,99 +38,40 @@
 
         <!--body-->
         <div class=" p-8 font-poppins">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-                <!--each pdf-->
-                <div class="bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4">
-                    <div class="flex overflow-clip text-center justify-center pt-2">Course Name</div>
-                    <div class="flex overflow-clip text-center justify-center -mt-4 text-slate-400 text-xs italic">
-                        Descriptianodad</div>
-                    <div class="bg-slate-400 h-64  hidden md:flex"></div>
-                    <div class="flex justify-center pt-2">
-                        <button class=" text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400 "> Download</button>
-                    </div>
-                </div>
-
-                <!--each pdf-->
-                <div class="bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4">
-                    <div class="flex overflow-clip text-center justify-center pt-2">Course Name</div>
-                    <div class="flex overflow-clip text-center justify-center -mt-4 text-slate-400 text-xs italic">
-                        Descriptianodad</div>
-                    <div class="bg-slate-400 h-64  hidden md:flex"></div>
-                    <div class="flex justify-center pt-2">
-                        <button class=" text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400 "> Download</button>
-                    </div>
-                </div>
-
-                <!--each pdf-->
-                <div class="bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4">
-                    <div class="flex overflow-clip text-center justify-center pt-2">Course Name</div>
-                    <div class="flex overflow-clip text-center justify-center -mt-4 text-slate-400 text-xs italic">
-                        Descriptianodad</div>
-                    <div class="bg-slate-400 h-64  hidden md:flex"></div>
-                    <div class="flex justify-center pt-2">
-                        <button class=" text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400 "> Download</button>
-                    </div>
-                </div>
-
-                <!--each pdf-->
-                <div class="bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4">
-                    <div class="flex overflow-clip text-center justify-center pt-2">Course Name</div>
-                    <div class="flex overflow-clip text-center justify-center -mt-4 text-slate-400 text-xs italic">
-                        Descriptianodad</div>
-                    <div class="bg-slate-400 h-64  hidden md:flex"></div>
-                    <div class="flex justify-center pt-2">
-                        <button class=" text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400 "> Download</button>
-                    </div>
-                </div>
-
-                <!--each pdf-->
-                <div class="bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4">
-                    <div class="flex overflow-clip text-center justify-center pt-2">Course Name</div>
-                    <div class="flex overflow-clip text-center justify-center -mt-4 text-slate-400 text-xs italic">
-                        Descriptianodad</div>
-                    <div class="bg-slate-400 h-64  hidden md:flex"></div>
-                    <div class="flex justify-center pt-2">
-                        <button class=" text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400 "> Download</button>
-                    </div>
-                </div>
-
-                <!--each pdf-->
-                <div class="bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4">
-                    <div class="flex overflow-clip text-center justify-center pt-2">Course Name</div>
-                    <div class="flex overflow-clip text-center justify-center -mt-4 text-slate-400 text-xs italic">
-                        Descriptianodad</div>
-                    <div class="bg-slate-400 h-64  hidden md:flex"></div>
-                    <div class="flex justify-center pt-2">
-                        <button class=" text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400 "> Download</button>
-                    </div>
-                </div>
-
-                <!--each pdf-->
-                <div class="bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4">
-                    <div class="flex overflow-clip text-center justify-center pt-2">Course Name</div>
-                    <div class="flex overflow-clip text-center justify-center -mt-4 text-slate-400 text-xs italic">
-                        Descriptianodad</div>
-                    <div class="bg-slate-400 h-64  hidden md:flex"></div>
-                    <div class="flex justify-center pt-2">
-                        <button class=" text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400 "> Download</button>
-                    </div>
-                </div>
-
-                <!--each pdf-->
-                <div class="bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4">
-                    <div class="flex overflow-clip text-center justify-center pt-2">Course Name</div>
-                    <div class="flex overflow-clip text-center justify-center -mt-4 text-slate-400 text-xs italic">
-                        Descriptianodad</div>
-                    <div class="bg-slate-400 h-64  hidden md:flex"></div>
-                    <div class="flex justify-center pt-2">
-                        <button class=" text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400 "> Download</button>
-                    </div>
-                </div>
-
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="pdfContainer">
+                <!-- PDF files will be dynamically added here -->
             </div>
         </div>
     </div>
+
+    <script>
+        window.onload = function () {
+            // Fetch the list of files from the server
+            fetch('/files')
+                .then(response => response.json())
+                .then(filesList => {
+                    const pdfContainer = document.getElementById('pdfContainer');
+                    filesList.forEach(function (file) {
+                        const pdfDiv = document.createElement('div');
+                        pdfDiv.className = 'bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4';
+                        pdfDiv.innerHTML = `
+                            <div class="flex overflow-clip text-center justify-center pt-2">${file}</div>
+                            <!--
+                            <div class="flex overflow-clip text-center justify-center -mt-4 text-slate-400 text-xs italic">
+                                Descriptianodad</div>
+                            -->
+                            <div class="bg-slate-400 h-64  hidden md:flex"></div>
+                            <div class="flex justify-center pt-2">
+                                <button class=" text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400 "> Download</button>
+                            </div>`;
+                        pdfContainer.appendChild(pdfDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching files:', error);
+                });
+        };
+    </script>
 
 </body>
 
