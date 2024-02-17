@@ -2,6 +2,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const formidable = require('formidable'); //npm install formidable
+const db = require('./database');
+const dbops = new db();
 
 const server = http.createServer((req, res) => {
 
@@ -26,21 +28,17 @@ const server = http.createServer((req, res) => {
 
         // temporary location of the uploaded file
         //   const oldPath = files.file.path;
-        const oldPath = uploadedFile.filepath;
-
-        // where to move the file
-        const newPath = './uploads/' + files.file.name;
+        const path = uploadedFile.filepath;
+        const filename = files.file[0].originalFilename;
+        
 
         // moving the file to the specified location
-        fs.rename(oldPath, newPath, (err) => {
-          if (err) {
-            res.writeHead(500, { 'Content-Type': 'text/plain' });
-            res.end('Internal Server Error');
-            return;
-          }
+        
           res.writeHead(200, { 'Content-Type': 'text/plain' });
           res.end('File uploaded and moved successfully');
-        });
+          var pdfData = fs.readFileSync(path);
+          dbops.store_file(pdfData, filename);
+        
       }
       else {
         console.error('No files uploaded or unexpected file format');
