@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const formidable = require('formidable'); //npm install formidable
+const formidable = require('formidable'); 
 const db = require('./database');
 const dbops = new db();
 
