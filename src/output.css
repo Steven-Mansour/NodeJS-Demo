@@ -578,6 +578,27 @@ video {
   }
 }
 
+.pdf-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pdf-item {
+  flex: 1 0 200px;
+  margin: 0 10px 20px 10px;
+  background-color: #fff;
+  padding: 8px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.download-btn {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

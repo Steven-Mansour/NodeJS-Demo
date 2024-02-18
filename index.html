@@ -35,7 +35,7 @@
 
         <!--body-->
         <div class=" p-8 font-poppins">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="pdfContainer">
+            <div class="pdf-container grid grid-cols-2 md:grid-cols-4 gap-4" id="pdfContainer">
                 <!-- PDF files will be dynamically added here -->
             </div>
         </div>
@@ -50,7 +50,7 @@
                     const pdfContainer = document.getElementById('pdfContainer');
                     filesList.forEach(function (file) {
                         const pdfDiv = document.createElement('div');
-                        pdfDiv.className = 'bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4';
+                        pdfDiv.className = 'pdf-item bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4';
                         pdfDiv.innerHTML = `
                             <div class="flex overflow-clip text-center justify-center pt-2" >${file.name}</div>
                             <div class="flex justify-center pt-2">
