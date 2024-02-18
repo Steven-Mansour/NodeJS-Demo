@@ -13,9 +13,8 @@ const server = http.createServer((req, res) => {
   if (req.url === '/files' && req.method.toLowerCase() === 'get') {
     dbops.getAllFiles()
       .then(filesList => {
-        const fileNames = filesList.map(file => file.name); // Extracting only the names
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(fileNames));
+        res.end(JSON.stringify(filesList));
       })
       .catch(error => {
         console.error('Error retrieving files:', error);
@@ -25,22 +24,22 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-// Check if the request is for downloading a file
-if (req.url.startsWith('/download') && req.method.toLowerCase() === 'get') {
-  const fileId = parseInt(req.url.split('/').pop()); // Extract file ID from URL
-  dbops.downloadFile(fileId)
+  // Check if the request is for downloading a file
+  if (req.url.startsWith('/download') && req.method.toLowerCase() === 'get') {
+    const fileId = parseInt(req.url.split('/').pop()); // Extract file ID from URL
+    dbops.downloadFile(fileId)
       .then(filePath => {
-          const fileStream = fs.createReadStream(filePath);
-          res.writeHead(200, {
-              'Content-Type': 'application/octet-stream', // Set appropriate content type for file download
-              'Content-Disposition': `attachment; filename="${path.basename(filePath)}"` // Set filename for download
-          });
-          fileStream.pipe(res); // Pipe the file stream to response object
+        const fileStream = fs.createReadStream(filePath);
+        res.writeHead(200, {
+          'Content-Type': 'application/octet-stream', // Set appropriate content type for file download
+          'Content-Disposition': `attachment; filename="${path.basename(filePath)}"` // Set filename for download
+        });
+        fileStream.pipe(res); // Pipe the file stream to response object
       })
       .catch(error => {
-          console.error('Error downloading file:', error);
-          res.writeHead(500, { 'Content-Type': 'text/plain' });
-          res.end('Internal Server Error');
+        console.error('Error downloading file:', error);
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Internal Server Error');
       });
     return;
   }
@@ -97,35 +96,35 @@ if (req.url.startsWith('/download') && req.method.toLowerCase() === 'get') {
 
   // routing
   let filePath = './';
-switch (req.url) {
-  case '/':
-    filePath += 'index.html';
-    res.statusCode = 200;
-    break;
-  case '/src/input.css':
-    filePath += 'src/style.css';
-    res.setHeader('Content-Type', 'text/css');
-    res.statusCode = 200;
-    break;
-  case '/src/output.css':
-    filePath += 'src/output.css';
-    res.setHeader('Content-Type', 'text/css');
-    res.statusCode = 200;
-    break;
-  case '/upload':
-    filePath += 'upload.html';
-    res.statusCode = 200;
-    break;
-  default:
-    filePath += '404.html';
-    res.statusCode = 404;
-}
+  switch (req.url) {
+    case '/':
+      filePath += 'index.html';
+      res.statusCode = 200;
+      break;
+    case '/src/input.css':
+      filePath += 'src/style.css';
+      res.setHeader('Content-Type', 'text/css');
+      res.statusCode = 200;
+      break;
+    case '/src/output.css':
+      filePath += 'src/output.css';
+      res.setHeader('Content-Type', 'text/css');
+      res.statusCode = 200;
+      break;
+    case '/upload':
+      filePath += 'upload.html';
+      res.statusCode = 200;
+      break;
+    default:
+      filePath += '404.html';
+      res.statusCode = 404;
+  }
 
   // send html
   fs.readFile(filePath, (err, data) => {
     if (err) {
-        console.log(err);
-        res.end();
+      console.log(err);
+      res.end();
     }
     res.end(data);
   });

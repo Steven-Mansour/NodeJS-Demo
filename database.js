@@ -42,7 +42,7 @@ class db {
 
     getAllFiles() {
         return new Promise((resolve, reject) => {
-            this.con.query('SELECT name, id FROM file', (err, results) => {
+            this.con.query('SELECT name, id as identifier  FROM file', (err, results) => {
                 if (err) {
                     console.error('Error retrieving files from the database:', err);
                     reject(err);
@@ -50,7 +50,7 @@ class db {
                 }
                 const filesList = results.map(row => ({
                     name: row.name,
-                    id: row.id
+                    id: row.identifier
                 }));
 
                 resolve(filesList);
@@ -66,7 +66,7 @@ class db {
                     reject(err);
                     return;
                 }
-    
+
                 const fileData = results[0];
                 if (!fileData) {
                     reject(new Error(`File with ID ${id} not found in the database`));
@@ -74,7 +74,7 @@ class db {
                 }
                 const filename = fileData.name;
                 const data = fileData.data;
-    
+
                 const filePath = `./${filename}`; // Renamed path to filePath
                 fs.writeFile(filePath, data, 'binary', (err) => {
                     if (err) {
@@ -88,7 +88,7 @@ class db {
             });
         });
     }
-    
+
 
     // Close the database connection
     end() {
@@ -96,7 +96,6 @@ class db {
     }
 }
 
-const database = new db();
-database.downloadFile(1)
+
 
 module.exports = db;

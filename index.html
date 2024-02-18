@@ -48,14 +48,13 @@
                 .then(response => response.json())
                 .then(filesList => {
                     const pdfContainer = document.getElementById('pdfContainer');
-                    filesList.forEach(function (file, id) {
+                    filesList.forEach(function (file) {
                         const pdfDiv = document.createElement('div');
                         pdfDiv.className = 'bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4';
                         pdfDiv.innerHTML = `
-                            <div class="flex overflow-clip text-center justify-center pt-2">${file}</div>
-                            <div class="bg-slate-400 h-64  hidden md:flex"></div>
+                            <div class="flex overflow-clip text-center justify-center pt-2" >${file.name}</div>
                             <div class="flex justify-center pt-2">
-                                <button class="download-btn text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400" data-id="${id}">Download</button>
+                                <button class="download-btn text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400" data-id="${file.id}" file-name ="${file.name}">Download</button>
                             </div>`;
                         pdfContainer.appendChild(pdfDiv);
                     });
@@ -65,7 +64,9 @@
                     downloadButtons.forEach(button => {
                         button.addEventListener('click', function () {
                             const fileId = this.getAttribute('data-id');
-                            downloadFile(fileId);
+                            const fileName = this.getAttribute('file-name');
+
+                            downloadFile(fileId, fileName);
                         });
                     });
                 })
@@ -75,7 +76,7 @@
         };
 
         // Function to trigger download request
-        function downloadFile(id) {
+        function downloadFile(id, fileName) {
             fetch(`/download/${id}`)
                 .then(response => {
                     if (!response.ok) {
@@ -87,7 +88,7 @@
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'downloaded_file.pdf';
+                    a.download = fileName;
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
