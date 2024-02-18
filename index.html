@@ -23,17 +23,14 @@
                     <div>
                         <a href="#">Report</a>
                     </div>
-
                     <div>
                         <a href="#">About us</a>
                     </div>
                     <div>
                         <a href="#">Report</a>
                     </div>
-
                 </div>
             </div>
-
         </div>
 
         <!--body-->
@@ -51,26 +48,54 @@
                 .then(response => response.json())
                 .then(filesList => {
                     const pdfContainer = document.getElementById('pdfContainer');
-                    filesList.forEach(function (file) {
+                    filesList.forEach(function (file, id) {
                         const pdfDiv = document.createElement('div');
                         pdfDiv.className = 'bg-white p-8 pt-2 rounded-lg flex flex-col gap-y-4';
                         pdfDiv.innerHTML = `
                             <div class="flex overflow-clip text-center justify-center pt-2">${file}</div>
-                            <!--
-                            <div class="flex overflow-clip text-center justify-center -mt-4 text-slate-400 text-xs italic">
-                                Descriptianodad</div>
-                            -->
                             <div class="bg-slate-400 h-64  hidden md:flex"></div>
                             <div class="flex justify-center pt-2">
-                                <button class=" text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400 "> Download</button>
+                                <button class="download-btn text-white bg-slate-800 p-2 rounded-full hover:bg-slate-400" data-id="${id}">Download</button>
                             </div>`;
                         pdfContainer.appendChild(pdfDiv);
+                    });
+
+                    // Attach event listeners to download buttons
+                    const downloadButtons = document.querySelectorAll('.download-btn');
+                    downloadButtons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            const fileId = this.getAttribute('data-id');
+                            downloadFile(fileId);
+                        });
                     });
                 })
                 .catch(error => {
                     console.error('Error fetching files:', error);
                 });
         };
+
+        // Function to trigger download request
+        function downloadFile(id) {
+            fetch(`/download/${id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'downloaded_file.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error('Error downloading file:', error);
+                });
+        }
     </script>
 
 </body>

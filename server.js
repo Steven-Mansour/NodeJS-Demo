@@ -25,6 +25,26 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+// Check if the request is for downloading a file
+if (req.url.startsWith('/download') && req.method.toLowerCase() === 'get') {
+  const fileId = parseInt(req.url.split('/').pop()); // Extract file ID from URL
+  dbops.downloadFile(fileId)
+      .then(filePath => {
+          const fileStream = fs.createReadStream(filePath);
+          res.writeHead(200, {
+              'Content-Type': 'application/octet-stream', // Set appropriate content type for file download
+              'Content-Disposition': `attachment; filename="${path.basename(filePath)}"` // Set filename for download
+          });
+          fileStream.pipe(res); // Pipe the file stream to response object
+      })
+      .catch(error => {
+          console.error('Error downloading file:', error);
+          res.writeHead(500, { 'Content-Type': 'text/plain' });
+          res.end('Internal Server Error');
+      });
+    return;
+  }
+
   // file upload
   if (req.url === '/upload' && req.method.toLowerCase() === 'post') {
     const form = new formidable.IncomingForm();
@@ -52,7 +72,7 @@ const server = http.createServer((req, res) => {
         var pdfData = fs.readFileSync(path);
         dbops.store_file(pdfData, filename);
 
-        /*dbops.getAllFiles()
+        dbops.getAllFiles()
           .then(filesList => {
             const htmlContent = fs.readFileSync('index.html', 'utf8'); // Read the HTML template file
             const updatedHtmlContent = htmlContent.replace('FILE_LIST', JSON.stringify(filesList));
@@ -63,7 +83,7 @@ const server = http.createServer((req, res) => {
             console.error('Error retrieving files from the database:', err);
             res.writeHead(500, { 'Content-Type': 'text/plain' });
             res.end('Internal Server Error');
-          });*/
+          });
 
       }
       else {
@@ -76,39 +96,40 @@ const server = http.createServer((req, res) => {
   }
 
   // routing
-  let path = './';
-  switch (req.url) {
-    case '/':
-      path += 'index.html';
-      res.statusCode = 200;
-      break;
-    case '/src/input.css':
-      path += 'src/style.css';
-      res.setHeader('Content-Type', 'text/css');
-      res.statusCode = 200;
-      break;
-    case '/src/output.css':
-      path += 'src/output.css';
-      res.setHeader('Content-Type', 'text/css');
-      res.statusCode = 200;
-      break;
-    case '/upload':
-      path += 'upload.html';
-      res.statusCode = 200;
-      break;
-    default:
-      path += '404.html';
-      res.statusCode = 404;
-  }
+  let filePath = './';
+switch (req.url) {
+  case '/':
+    filePath += 'index.html';
+    res.statusCode = 200;
+    break;
+  case '/src/input.css':
+    filePath += 'src/style.css';
+    res.setHeader('Content-Type', 'text/css');
+    res.statusCode = 200;
+    break;
+  case '/src/output.css':
+    filePath += 'src/output.css';
+    res.setHeader('Content-Type', 'text/css');
+    res.statusCode = 200;
+    break;
+  case '/upload':
+    filePath += 'upload.html';
+    res.statusCode = 200;
+    break;
+  default:
+    filePath += '404.html';
+    res.statusCode = 404;
+}
 
   // send html
-  fs.readFile(path, (err, data) => {
+  fs.readFile(filePath, (err, data) => {
     if (err) {
-      console.log(err);
-      res.end();
+        console.log(err);
+        res.end();
     }
     res.end(data);
   });
+
 
 
 });
