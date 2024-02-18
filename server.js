@@ -8,19 +8,20 @@ const dbops = new db();
 const server = http.createServer((req, res) => {
 
   res.setHeader('Content-Type', 'text/html');
-  
+
   // Check if the request is for fetching files
   if (req.url === '/files' && req.method.toLowerCase() === 'get') {
     dbops.getAllFiles()
-        .then(filesList => {
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(filesList));
-        })
-        .catch(error => {
-            console.error('Error retrieving files:', error);
-            res.writeHead(500, { 'Content-Type': 'text/plain' });
-            res.end('Internal Server Error');
-        });
+      .then(filesList => {
+        const fileNames = filesList.map(file => file.name); // Extracting only the names
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(fileNames));
+      })
+      .catch(error => {
+        console.error('Error retrieving files:', error);
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Internal Server Error');
+      });
     return;
   }
 
@@ -45,29 +46,25 @@ const server = http.createServer((req, res) => {
         //   const oldPath = files.file.path;
         const path = uploadedFile.filepath;
         const filename = files.file[0].originalFilename;
-        
 
-        // moving the file to the specified location
-        
-         // res.writeHead(200, { 'Content-Type': 'text/plain' });
-         // res.end('File uploaded and moved successfully');
-          var pdfData = fs.readFileSync(path);
-          dbops.store_file(pdfData, filename);
-        
-          const filesList = dbops.getAllFiles(); 
-          dbops.getAllFiles()
-            .then(filesList => {
-              const htmlContent = fs.readFileSync('index.html', 'utf8'); // Read the HTML template file
-              const updatedHtmlContent = htmlContent.replace('FILE_LIST', JSON.stringify(filesList));
-              res.writeHead(302, { 'Location': '/' }); // 302 for redirecting
-              res.end(updatedHtmlContent);
-            })
-            .catch(err => {
-              console.error('Error retrieving files from the database:', err);
-              res.writeHead(500, { 'Content-Type': 'text/plain' });
-              res.end('Internal Server Error');
-            });
-          
+        // res.writeHead(200, { 'Content-Type': 'text/plain' });
+        // res.end('File uploaded and moved successfully');
+        var pdfData = fs.readFileSync(path);
+        dbops.store_file(pdfData, filename);
+
+        /*dbops.getAllFiles()
+          .then(filesList => {
+            const htmlContent = fs.readFileSync('index.html', 'utf8'); // Read the HTML template file
+            const updatedHtmlContent = htmlContent.replace('FILE_LIST', JSON.stringify(filesList));
+            res.writeHead(302, { 'Location': '/' }); // 302 for redirecting
+            res.end(updatedHtmlContent);
+          })
+          .catch(err => {
+            console.error('Error retrieving files from the database:', err);
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Internal Server Error');
+          });*/
+
       }
       else {
         console.error('No files uploaded or unexpected file format');

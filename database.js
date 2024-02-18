@@ -1,6 +1,15 @@
 const mysql = require('mysql2');
 const fs = require('fs');
 
+/* to create the db
+CREATE DATABASE nodeDemo;
+USE nodeDemo;
+CREATE TABLE IF NOT EXISTS file (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    data MediumBLOB NOT NULL
+); */
+
 class db {
     constructor() {
         // Connecting to the DB
@@ -11,7 +20,7 @@ class db {
             database: "nodeDemo"
         });
 
-        this.con.connect(function(err) {
+        this.con.connect(function (err) {
             if (err) throw err;
             console.log("Connected!");
         });
@@ -28,19 +37,46 @@ class db {
             if (err) throw err;
             console.log('PDF file inserted into the database');
         });
-        
+
     }
 
     getAllFiles() {
         return new Promise((resolve, reject) => {
-            this.con.query('SELECT name FROM file', (err, results) => {
+            this.con.query('SELECT name, id FROM file', (err, results) => {
                 if (err) {
                     console.error('Error retrieving files from the database:', err);
                     reject(err);
                     return;
                 }
-                const filesList = results.map(row => row.name);
+                const filesList = results.map(row => ({
+                    name: row.name,
+                    id: row.id
+                }));
+
                 resolve(filesList);
+            });
+        });
+    }
+
+    downloadFile(id) {
+        return new Promise((resolve, reject) => {
+            this.con.query('SELECT data FROM file  WHERE id = ? ', [id], (err, results) => {
+                if (err) {
+                    console.error('Error retrieving files from the database:', err);
+                    reject(err);
+                    return;
+                }
+                const blob = results[0]
+                const path = './';
+                fs.writeFile(path, blob, 'binary', (err) => {
+                    if (err) {
+                        console.error('Error saving file:', err);
+                        return;
+                    }
+                    console.log('File saved successfully.');
+                })
+                // resolve(results[0]);
+
             });
         });
     }
@@ -50,5 +86,8 @@ class db {
         this.con.end();
     }
 }
+
+const database = new db();
+database.downloadFile(1)
 
 module.exports = db;
