@@ -28,21 +28,21 @@ const server = http.createServer((req, res) => {
   if (req.url.startsWith('/download') && req.method.toLowerCase() === 'get') {
     const fileId = parseInt(req.url.split('/').pop()); // Extract file ID from URL
     dbops.downloadFile(fileId)
-      .then(filePath => {
-        const fileStream = fs.createReadStream(filePath);
-        res.writeHead(200, {
-          'Content-Type': 'application/octet-stream', // Set appropriate content type for file download
-          'Content-Disposition': `attachment; filename="${path.basename(filePath)}"` // Set filename for download
+        .then(({ data, filename }) => {
+            res.writeHead(200, {
+                'Content-Type': 'application/octet-stream',
+                'Content-Disposition': `attachment; filename="${filename}"`
+            });
+            res.end(data); // Set response body to the file data buffer
+        })
+        .catch(error => {
+            console.error('Error downloading file:', error);
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Internal Server Error');
         });
-        fileStream.pipe(res); // Pipe the file stream to response object
-      })
-      .catch(error => {
-        console.error('Error downloading file:', error);
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Internal Server Error');
-      });
     return;
-  }
+}
+
 
   // file upload
   if (req.url === '/upload' && req.method.toLowerCase() === 'post') {

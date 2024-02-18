@@ -59,35 +59,30 @@ class db {
     }
 
     downloadFile(id) {
-        return new Promise((resolve, reject) => {
-            this.con.query('SELECT name, data FROM file WHERE id = ?', [id], (err, results) => {
-                if (err) {
-                    console.error('Error retrieving file from the database:', err);
-                    reject(err);
-                    return;
-                }
+    return new Promise((resolve, reject) => {
+        this.con.query('SELECT name, data FROM file WHERE id = ?', [id], (err, results) => {
+            if (err) {
+                console.error('Error retrieving file from the database:', err);
+                reject(err);
+                return;
+            }
 
-                const fileData = results[0];
-                if (!fileData) {
-                    reject(new Error(`File with ID ${id} not found in the database`));
-                    return;
-                }
-                const filename = fileData.name;
-                const data = fileData.data;
+            const fileData = results[0];
+            if (!fileData) {
+                reject(new Error(`File with ID ${id} not found in the database`));
+                return;
+            }
+            const filename = fileData.name;
+            const data = fileData.data;
 
-                const filePath = `./${filename}`; // Renamed path to filePath
-                fs.writeFile(filePath, data, 'binary', (err) => {
-                    if (err) {
-                        console.error('Error saving file:', err);
-                        reject(err);
-                        return;
-                    }
-                    console.log('File saved successfully.');
-                    resolve(filePath); // Resolve with the path where the file is saved
-                });
+            resolve({
+                data: data,
+                filename: filename
             });
         });
-    }
+    });
+}
+
 
 
     // Close the database connection
